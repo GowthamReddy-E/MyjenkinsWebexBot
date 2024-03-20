@@ -45,6 +45,10 @@ class JenkinsInfo:
         else:
             return "N/A"
 
+
+
+
+
 class JenkinsInfoCommand(Command):
     def __init__(self, jenkins_info):
         super().__init__(
@@ -59,7 +63,10 @@ class JenkinsInfoCommand(Command):
         # For example:
         # You can send a message with the Jenkins information to the user or room
         pass
-
+    
+    
+    
+    
     def get_adaptive_card(self, jenkins_info):
         all_jobs_info = jenkins_info.get_all_jobs_info()
         if all_jobs_info:
@@ -75,10 +82,13 @@ class JenkinsInfoCommand(Command):
                 triggering_time_ms = job_details.get("timestamp", 0)
                 triggering_time = datetime.datetime.fromtimestamp(triggering_time_ms / 1000).strftime('%d-%m-%Y %H:%M:%S')
                 job_status = "🟢" if last_successful_build_number == current_build_number else "🔴"
-                
+            
+                # Construct the URL for the job details page
+                job_url = f"{jenkins_info.jenkins_url}/job/{job_name}/{current_build_number}"
+            
                 card_body.append({
                     "type": "TextBlock",
-                    "text": f"{job_status} > {job_name} > {current_build_number} > {last_successful_build_number} > {last_failure_build_number} > {build_duration} > {triggering_time}",
+                    "text": f"{job_status} > [{job_name}]({job_url}) > {current_build_number} > {last_successful_build_number} > {last_failure_build_number} > {build_duration} > {triggering_time}",
                     "wrap": True
                 })
             card = {
@@ -99,6 +109,8 @@ class JenkinsInfoCommand(Command):
                 ]
             }
 
+
+    
     def format_duration(self, milliseconds):
         if milliseconds == 0:
             return "N/A"
